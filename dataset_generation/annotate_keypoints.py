@@ -14,7 +14,7 @@ def make_xml(name, bbox, points, path='out'):
 
 font = cv2.FONT_HERSHEY_SIMPLEX 
 
-img_dir = 'A:/Projects/Sortomat_2/dataset_alpha/bottles/PET_Blue/'
+img_dir = 'samples/'
 img_list = os.listdir(img_dir)
 n = 0
 
