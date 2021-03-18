@@ -99,11 +99,11 @@ def combine_imgs2(img1, img2, mask, x, y):
 
 
 def gen(out_img_count = 3000,
-        img_dir = 'A:/Projects/Project2_Object_detection_keypoints/dataset_generation/annotated/',
+        img_dir = 'annotated/',
         save_dir = 'out/'):
   font = cv2.FONT_HERSHEY_SIMPLEX
 
-  backgrounds_dir = 'A:/YOLO3/generator/sortomat3/'
+  backgrounds_dir = 'backgrounds/'
 
   # background
   b_list = os.listdir(backgrounds_dir)
@@ -114,7 +114,7 @@ def gen(out_img_count = 3000,
   # object
   o_list = [element[:-len('.png')] for element in os.listdir(img_dir) if element[-len('.xml'):] != '.xml']
   o_gamma = (0.5, 1.5)
-  o_scale = (0.5, 1.0)
+  o_scale = (0.9, 1.2)
   o_pos_x = (150, 150)
   o_pos_y = (100, 50)
   o_rotation = (-10, -9)
@@ -182,7 +182,7 @@ def gen(out_img_count = 3000,
 
 show = not True
 
-count = 3000
+count = 5000
 
 t = time.time()
 gen(out_img_count = count)
