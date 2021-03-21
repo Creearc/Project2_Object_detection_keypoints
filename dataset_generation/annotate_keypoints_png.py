@@ -14,14 +14,14 @@ def make_xml(name, bbox, points, path='out'):
 
 font = cv2.FONT_HERSHEY_SIMPLEX 
 
-img_dir = 'samples/'
+img_dir = 'datasets_people/samples/'
 img_list = os.listdir(img_dir)
 n = 0
 
 bbox = None
 points = []
 
-save_path = 'annotated/'
+save_path = 'datasets_people/annotated_2/'
 
 while True:
 
@@ -51,9 +51,11 @@ while True:
     if n < len(img_list) - 1:
       n += 1
   elif key == ord('A'):
-    n -= 50
+    if n > 50:
+      n -= 50
   elif key == ord('D'):
-    n += 50
+    if n < len(img_list) - 51:
+      n += 50
   elif key == ord('b'):
     bbox = cv2.selectROI("", frame, fromCenter=False, showCrosshair=True)
   elif key == ord('p'):

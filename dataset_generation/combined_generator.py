@@ -12,7 +12,7 @@ def rotate(origin, point, angle):
   px, py = point
   qx = ox + np.cos(angle) * (px - ox) - np.sin(angle) * (py - oy)
   qy = oy + np.sin(angle) * (px - ox) + np.cos(angle) * (py - oy)
-  return int(qx), int(qy) 
+  return [int(qx), int(qy)]
 
 
 def get_params(s):
@@ -30,7 +30,7 @@ def get_params(s):
 
 def make_xml(name, bbox, points, path='out'):
   f = open('{}{}.xml'.format(path, name), 'w')
-  f.write('''<box top='{}' left='{}' width='{}' height='{}'>\n'''.format(bbox[1], bbox[0], bbox[2], bbox[3]))
+  f.write('''<box top='{}' left='{}' width='{}' height='{}'>\n'''.format(bbox[0], bbox[1], bbox[2], bbox[3]))
   for i in range(len(points)):
     f.write('''<part name='{}' x='{}' y='{}'/>\n'''.format(i, points[i][0], points[i][1]))
   f.write('''</box>\n''')
@@ -99,11 +99,12 @@ def combine_imgs2(img1, img2, mask, x, y):
 
 
 def gen(out_img_count = 3000,
-        img_dir = 'annotated/',
-        save_dir = 'out/'):
+        img_dir = 'datasets_people/annotated_2/',
+        save_dir = 'datasets_people/out/',
+        save_dir_crop = 'datasets_people/out_crop/'):
   font = cv2.FONT_HERSHEY_SIMPLEX
 
-  backgrounds_dir = 'backgrounds/'
+  backgrounds_dir = 'datasets_people/backgrounds/'
 
   # background
   b_list = os.listdir(backgrounds_dir)
@@ -144,10 +145,10 @@ def gen(out_img_count = 3000,
     
     o_box[0] = int(o_box[0] * k + o_y)
     o_box[1] = int(o_box[1] * k + o_x)
-    o_box[2] = int(o_box[2] * k * 1.1)
-    o_box[3] = int(o_box[3] * k * 1.3)
-    o_box[0] = int(o_box[0] - o_box[3] * 0.1)
-    o_box[1] = int(o_box[1] - o_box[2] * 0.05)
+    o_box[2] = int(o_box[2] * k * 1)
+    o_box[3] = int(o_box[3] * k * 1)
+    o_box[0] = int(o_box[0] - o_box[3] * 0)
+    o_box[1] = int(o_box[1] - o_box[2] * 0)
 
     c_x, c_y = o_box[1] + o_box[2] // 2, o_box[0] + o_box[3] // 2   
       
@@ -161,8 +162,7 @@ def gen(out_img_count = 3000,
     filename = time.time()
     cv2.imwrite( '{}{}.jpg'.format(save_dir, filename), out)
     make_xml(filename, o_box, o_points, path=save_dir)
-    
-    n += 1
+
     if show:
       frame = out.copy()
       cv2.circle(frame,(c_x, c_y), 3, (0,255,255), -1)
@@ -174,15 +174,45 @@ def gen(out_img_count = 3000,
         cv2.putText(frame, str(i + 1), (o_points[i][0], o_points[i][1]), font,
                     0.8, (255, 255, 255), 1, cv2.LINE_AA) 
       cv2.imshow('res', frame)
+
+    if True:
+      crop = out[o_box[0] : o_box[0] + o_box[3], o_box[1] : o_box[1] + o_box[2]]
+      
+      for i in range(len(o_points)):
+        o_points[i][0] = o_points[i][0] - o_box[1]
+        o_points[i][1] = o_points[i][1] - o_box[0]
+        
+      o_box[0] = 0
+      o_box[1] = 0
+
+      cv2.imwrite( '{}{}.jpg'.format(save_dir_crop, filename), crop)
+      make_xml(filename, o_box, o_points, path=save_dir_crop)
+
+      if show:
+        frame = crop.copy()
+        cv2.circle(frame,(c_x, c_y), 3, (0,255,255), -1)
+        cv2.rectangle(frame, (o_box[1], o_box[0]), (o_box[1] + o_box[2], o_box[0] + o_box[3]), (0,255,0), 1)
+        for i in range(len(o_points)):
+          cv2.circle(frame,(o_points[i][0], o_points[i][1]), 3, (0,0,255), -1)
+          cv2.putText(frame, str(i + 1), (o_points[i][0], o_points[i][1]), font,
+                      0.8, (0, 0, 0), 2, cv2.LINE_AA)
+          cv2.putText(frame, str(i + 1), (o_points[i][0], o_points[i][1]), font,
+                      0.8, (255, 255, 255), 1, cv2.LINE_AA) 
+        cv2.imshow('crop', frame)
+    
+    n += 1
+
+    if show:
       key = cv2.waitKey()
       if key == ord('q') or key == 27:
         cv2.destroyAllWindows()
         break
       
 
-show = not True
+show = True
+show = False
 
-count = 5000
+count = 2000
 
 t = time.time()
 gen(out_img_count = count)
