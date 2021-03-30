@@ -4,3 +4,4 @@ dataset_generation/people/
 *.xml
 *.jpeg
 *.jpg
+*.h5
