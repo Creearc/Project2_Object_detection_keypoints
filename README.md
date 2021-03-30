@@ -47,7 +47,7 @@ Folder
 final_system/
 ```
 All programs to run final system which detects object (luminaire), finds it's keypoints and draws the 3D bounding box. 
-To run final system use:
+To run final system, use:
 ```
 python realtime_detect_with_kpd_pos.py --shape-predictor kplum_gen_ninth_comb_test.dat
 ```
