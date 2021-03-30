@@ -416,7 +416,7 @@ class YOLO(object):
             #________
 
             # put object rectangle
-            cv2.rectangle(image, (left, top), (right, bottom), self.colors[c], thickness)
+            #cv2.rectangle(image, (left, top), (right, bottom), self.colors[c], thickness)
 
             #________
             
