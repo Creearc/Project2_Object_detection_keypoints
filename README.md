@@ -7,7 +7,6 @@ dataset_generation/
 ```
 All programs to annotate and generate data are placed in this folder.
 
-
 ## Yolo
 Folder
 ```
@@ -28,6 +27,31 @@ To train model whith more than one class use this program:
 ```
 train_combine_2.py
 ```
+## Dlib
+Folder
+```
+dlib/
+```
+All programs to train dlib shape predictor for kepoints detection (required images annotated keypoints).
+
+## Evaluation
+Folder
+```
+evaluation/
+```
+All programs to evaluate yolo object detection models using Intersection ovaer Union and dlib shape predictor.
+
+## Final system 
+Folder
+```
+final_system/
+```
+All programs to run final system which detects object (luminaire), finds it's keypoints and draws the 3D bounding box. 
+To run final system, use:
+```
+python realtime_detect_with_kpd_pos.py --shape-predictor kplum_gen_ninth_comb_test.dat
+```
+but it requires trained YOLO object detection model (```.h5```) in folder ```logs/``` and trained dlib shape predictor (```.dat```)
 
 ## Intel camera
 In folder 
