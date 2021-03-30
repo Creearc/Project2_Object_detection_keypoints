@@ -99,7 +99,7 @@ def combine_imgs2(img1, img2, mask, x, y):
 
 
 def gen(out_img_count = 3000,
-        img_dir = 'datasets_people/annotated_2/',
+        img_dir = 'datasets_people/annotated/',
         save_dir = 'datasets_people/out/',
         save_dir_crop = 'datasets_people/out_crop/'):
   font = cv2.FONT_HERSHEY_SIMPLEX
@@ -210,9 +210,9 @@ def gen(out_img_count = 3000,
       
 
 show = True
-show = False
+#show = False
 
-count = 2000
+count = 5000
 
 t = time.time()
 gen(out_img_count = count)
