@@ -273,13 +273,7 @@ ap.add_argument("-p", "--shape-predictor", required=True,
     help="path to facial landmark predictor")
 args = vars(ap.parse_args())
 
-# initialize dlib's face detector (HOG-based) and then load our
-# trained shape predictor
-#print("[INFO] loading facial landmark predictor...")
-#shape_predictor_kp =                                              # переделать?!
 predictor = dlib.shape_predictor(args["shape_predictor"])
-#predictor = dlib.shape_predictor()
-
 n = 0
 #fls = os.listdir(img_path)
 font = cv2.FONT_HERSHEY_SIMPLEX
@@ -292,7 +286,6 @@ class YOLO(object):
         #"model_path": 'logs/20000_realsense_graphcut_trained_weights_final_tiny.h5',
         "model_path": 'logs/40400_trained_weights_final_t.h5',
         "anchors_path": 'model_data/tiny_yolo_anchors.txt',
-#        "anchors_path": 'model_data/yolo_anchors.txt',
         "classes_path": 'LumDetector_classes.txt',
         "score" : 0.3,
         "iou" : 0.45,
@@ -308,8 +301,8 @@ class YOLO(object):
             return "Unrecognized attribute name '" + n + "'"
 
     def __init__(self, **kwargs):
-        self.__dict__.update(self._defaults) # set up default values
-        self.__dict__.update(kwargs) # and update with user overrides
+        self.__dict__.update(self._defaults)
+        self.__dict__.update(kwargs)
         self.class_names = self._get_class()
         self.anchors = self._get_anchors()
         self.sess = K.get_session()
@@ -342,7 +335,7 @@ class YOLO(object):
         except:
             self.yolo_model = tiny_yolo_body(Input(shape=(None,None,3)), num_anchors//2, num_classes) \
                 if is_tiny_version else yolo_body(Input(shape=(None,None,3)), num_anchors//3, num_classes)
-            self.yolo_model.load_weights(self.model_path) # make sure model, anchors and classes match
+            self.yolo_model.load_weights(self.model_path)
         else:
             assert self.yolo_model.layers[-1].output_shape[-1] == \
                 num_anchors/len(self.yolo_model.output) * (num_classes + 5), \
@@ -358,7 +351,7 @@ class YOLO(object):
             map(lambda x: (int(x[0] * 255), int(x[1] * 255), int(x[2] * 255)),
                 self.colors))
 
-        np.random.shuffle(self.colors)  # Shuffle colors to decorrelate adjacent classes.
+        np.random.shuffle(self.colors) 
 
         # Generate output tensor targets for filtered bounding boxes.
         self.input_image_shape = K.placeholder(shape=(2, ))
@@ -378,12 +371,9 @@ class YOLO(object):
             [self.boxes, self.scores, self.classes],
             feed_dict={
                 self.yolo_model.input: image_data,
-                self.input_image_shape: [image.shape[0], image.shape[1]],#[image.size[1], image.size[0]],
+                self.input_image_shape: [image.shape[0], image.shape[1]],
                 K.learning_phase(): 0
             })
-
-        #print('Found {} boxes for {}'.format(len(out_boxes), 'img'))
-
         thickness = (image.shape[0] + image.shape[1]) // 600
         fontScale=1
         ObjectsList = []
@@ -414,33 +404,31 @@ class YOLO(object):
             kp_shape = face_utils.shape_to_np(kp_shape)
             i_kp = -1
             #________
-
             # put object rectangle
             #cv2.rectangle(image, (left, top), (right, bottom), self.colors[c], thickness)
-
             #________
-            
+            # put object key points with point number
             for (sX, sY) in kp_shape:
                 #cv2.circle(image, (sX + left, sY + top), 3, (0, 0, 255), -1)
                 cv2.putText(image, str(i_kp + 1), (sX + left, sY + top), font,0.8, (0, 0, 0), 2, cv2.LINE_AA)
                 cv2.putText(image, str(i_kp + 1), (sX + left, sY + top), font,0.8, (255, 255, 255), 1, cv2.LINE_AA)
                 i_kp += 1
-            
             #________
+            # put 3D bounding box
             image = connect_points_6(image, kp_shape, left, top)
 
+            '''
             # get text size
             (test_width, text_height), baseline = cv2.getTextSize(label, cv2.FONT_HERSHEY_SIMPLEX, thickness/self.text_size, 1)
-
             # put text rectangle
-            #cv2.rectangle(image, (left, top), (left + test_width, top - text_height - baseline), self.colors[c], thickness=cv2.FILLED)
-
+            cv2.rectangle(image, (left, top), (left + test_width, top - text_height - baseline), self.colors[c], thickness=cv2.FILLED)
             # put text above rectangle
-            #cv2.putText(image, label, (left, top-2), cv2.FONT_HERSHEY_SIMPLEX, thickness/self.text_size, (0, 0, 0), 1)
-
+            cv2.putText(image, label, (left, top-2), cv2.FONT_HERSHEY_SIMPLEX, thickness/self.text_size, (0, 0, 0), 1)
+            '''
+            
             # add everything to list
             ObjectsList.append([top, left, bottom, right, mid_v, mid_h, label, scores])
-
+            
         return image, ObjectsList
 
     def close_session(self):
@@ -495,6 +483,6 @@ if __name__=="__main__":
     p1 = multiprocessing.Process(target=GRABMSS_screen, args=(p_input,))
     p2 = multiprocessing.Process(target=SHOWMSS_screen, args=(p_output,))
 
-    # starting our processes
+    # starting processes
     p1.start()
     p2.start()
