@@ -1,4 +1,5 @@
 # Project2_Object_detection_keypoints
+Один из авторов - Князев Александр АСУ2-19-1м
 
 ## Dataset generation
 Folder
