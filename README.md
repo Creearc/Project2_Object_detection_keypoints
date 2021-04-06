@@ -1,4 +1,5 @@
 # Project2_Object_detection_keypoints
+# Программы для создания датасетов, обучения Dlib и YOLO
 Один из авторов - Князев Александр АСУ2-19-1м
 
 ## Dataset generation
